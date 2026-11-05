@@ -1,0 +1,87 @@
+server:
+  port: ${PORT:8080}
+
+spring:
+  application:
+    name: tokentrim
+  autoconfigure:
+    exclude:
+      - org.springframework.boot.autoconfigure.data.redis.RedisAutoConfiguration
+      - org.springframework.boot.autoconfigure.data.redis.RedisRepositoriesAutoConfiguration
+      - org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration
+  jackson:
+    serialization:
+      write-dates-as-timestamps: false
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,prometheus,metrics
+  endpoint:
+    health:
+      probes:
+        enabled: true
+  metrics:
+    tags:
+      application: tokentrim
+
+info:
+  app:
+    name: TokenTrim
+    description: OpenAI-compatible proxy that reduces token spend
+
+logging:
+  level:
+    io.tokentrim: INFO
+
+# Defaults for routes, boilerplate phrases, and model prices live in
+# TokenTrimProperties. Override any of them here.
+tokentrim:
+  upstream:
+    mode: ${TOKENTRIM_UPSTREAM_MODE:http}
+    base-url: ${TOKENTRIM_UPSTREAM_BASE_URL:https://api.openai.com/v1}
+    api-key: ${TOKENTRIM_UPSTREAM_API_KEY:}
+    connect-timeout: 5s
+    read-timeout: 90s
+  security:
+    proxy-api-key: ${TOKENTRIM_PROXY_API_KEY:}
+  tokenizer:
+    encoding: cl100k_base
+  embeddings:
+    provider: ${TOKENTRIM_EMBEDDINGS_PROVIDER:hashing}
+    model: text-embedding-3-small
+    dimensions: 256
+  compression:
+    enabled: true
+    history-token-budget: 768
+    max-summary-tokens: 160
+  cache:
+    enabled: true
+    backend: ${TOKENTRIM_CACHE_BACKEND:memory}
+    similarity-threshold: 0.72
+    ttl: 24h
+    max-entries: 5000
+    redis:
+      host: ${TOKENTRIM_REDIS_HOST:localhost}
+      port: ${TOKENTRIM_REDIS_PORT:6379}
+      password: ${TOKENTRIM_REDIS_PASSWORD:}
+    pgvector:
+      url: ${TOKENTRIM_PG_URL:jdbc:postgresql://localhost:5432/tokentrim}
+      username: ${TOKENTRIM_PG_USER:tokentrim}
+      password: ${TOKENTRIM_PG_PASSWORD:tokentrim}
+  routing:
+    enabled: true
+    honor-requested-model: false
+    fallback-model: gpt-4o-mini
+  rag:
+    enabled: true
+    top-k: 4
+    chunk-tokens: 180
+    overlap-tokens: 30
+    token-budget: 640
+    min-score: 0.20
+    keep-best-chunk: true
+  quality:
+    enabled: false
+    sample-rate: 0.0

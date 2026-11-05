@@ -1,0 +1,36 @@
+{
+  "model": "gpt-4o",
+  "messages": [
+    {
+      "role": "system",
+      "content": "You are a helpful assistant.   Please note that you should answer briefly.\n\n\nIt is important to note that accuracy matters.\n\nPolicy boilerplate. Policy boilerplate. Policy boilerplate. Policy boilerplate. Policy boilerplate."
+    },
+    {
+      "role": "user",
+      "content": "Earlier question number 0. Could you elaborate on miscellaneous background context? Could you elaborate on miscellaneous background context?"
+    },
+    {
+      "role": "assistant",
+      "content": "Sure, I'd be happy to help! Here is a long answer that repeats itself. Here is a long answer that repeats itself. I hope this helps! Let me know if you need anything else."
+    },
+    {
+      "role": "user",
+      "content": "Earlier question number 1. Could you elaborate on miscellaneous background context? Could you elaborate on miscellaneous background context?"
+    },
+    {
+      "role": "assistant",
+      "content": "Sure, I'd be happy to help! Here is a long answer that repeats itself. Here is a long answer that repeats itself. I hope this helps!"
+    },
+    {
+      "role": "user",
+      "content": "What is the capital of France?"
+    }
+  ],
+  "tokentrim": {
+    "documents": [
+      "The capital of France is Paris. Paris sits on the Seine and has been France's capital since the medieval monarchy consolidated power there. Paris remains the capital of France. Paris remains the capital of France. Paris remains the capital of France.",
+      "The capital of Germany is Berlin. Berlin is a large city in the northeast and the seat of Germany's government. Berlin is the capital of Germany. Berlin is the capital of Germany.",
+      "Sourdough bread uses flour, water, and salt. Stretch and fold the dough, then bake it in a Dutch oven. Feed the sourdough starter with flour. Feed the sourdough starter with flour."
+    ]
+  }
+}
