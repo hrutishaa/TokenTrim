@@ -59,7 +59,7 @@ A real upstream:
 ```bash
 export TOKENTRIM_UPSTREAM_MODE=http
 export TOKENTRIM_UPSTREAM_BASE_URL=https://api.openai.com/v1
-export TOKENTRIM_UPSTREAM_API_KEY=sk-...
+export TOKENTRIM_UPSTREAM_API_KEY=your-key-here
 ./mvnw spring-boot:run
 ```
 
