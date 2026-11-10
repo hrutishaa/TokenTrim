@@ -15,6 +15,14 @@ public final class TokenTrimHeaders {
     public static final String QUALITY = "X-TokenTrim-Quality";
     public static final String CACHE_SIMILARITY = "X-TokenTrim-Cache-Similarity";
     public static final String RAG_CHUNKS = "X-TokenTrim-Rag-Chunks";
+    public static final String RUN_ID = "X-TokenTrim-Run-Id";
+    public static final String RUN_TOKENS = "X-TokenTrim-Run-Tokens";
+    public static final String BUDGET_WARNING = "X-TokenTrim-Budget-Warning";
+    public static final String LOOP_DETECTED = "X-TokenTrim-Loop-Detected";
+    public static final String SAVED_TOOL_COMPACTION = "X-TokenTrim-Saved-Tool-Compaction";
+    public static final String SAVED_SCHEMA_PRUNING = "X-TokenTrim-Saved-Schema-Pruning";
+    public static final String SAVED_LOOP_DEDUPE = "X-TokenTrim-Saved-Loop-Dedupe";
+    public static final String SAVED_STEP_MEMORY = "X-TokenTrim-Saved-Step-Memory";
 
     private TokenTrimHeaders() {
     }

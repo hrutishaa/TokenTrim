@@ -3,6 +3,10 @@ package io.tokentrim.pipeline;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import io.tokentrim.agent.AgentOutcome;
+import io.tokentrim.agent.AgentPreprocessor;
+import io.tokentrim.agent.RunBudgetExceededException;
+import io.tokentrim.agent.RunLedger;
 import io.tokentrim.api.TokenTrimHeaders;
 import io.tokentrim.api.dto.ChatCompletionRequest;
 import io.tokentrim.api.dto.ChatCompletionResponse;
@@ -55,6 +59,8 @@ public final class ChatPipeline {
     private final QualityChecker qualityChecker;
     private final ObjectMapper objectMapper;
     private final Clock clock;
+    private final AgentPreprocessor agent;
+    private final RunLedger runs;
 
     public ChatPipeline(
             TokenTrimProperties properties,
@@ -68,7 +74,8 @@ public final class ChatPipeline {
             SavingsEstimator savings,
             QualityChecker qualityChecker,
             ObjectMapper objectMapper,
-            Clock clock
+            Clock clock,
+            RunLedger runs
     ) {
         this.properties = properties;
         this.tokenCounter = tokenCounter;
@@ -82,24 +89,34 @@ public final class ChatPipeline {
         this.qualityChecker = qualityChecker;
         this.objectMapper = objectMapper;
         this.clock = clock == null ? Clock.systemUTC() : clock;
+        this.agent = new AgentPreprocessor(properties, tokenCounter, embeddings, objectMapper);
+        this.runs = runs == null ? new RunLedger(properties) : runs;
     }
 
     public PipelineResult execute(ChatCompletionRequest request) {
+        return execute(request, null);
+    }
+
+    public PipelineResult execute(ChatCompletionRequest request, String runId) {
         long started = System.nanoTime();
         try {
-            PipelineResult result = run(request, started);
-            return result;
+            return run(request, runId, started);
+        } catch (RunBudgetExceededException exception) {
+            throw exception;
         } catch (RuntimeException exception) {
             metrics.recordFailure(System.nanoTime() - started);
             throw exception;
         }
     }
 
-    private PipelineResult run(ChatCompletionRequest request, long started) {
+    private PipelineResult run(ChatCompletionRequest request, String runId, long started) {
         List<ChatMessage> originalMessages = request.getMessages() == null ? List.of() : request.getMessages();
-        int originalTokens = tokenCounter.countMessages(originalMessages) + optionDocumentTokens(request.getTokentrim());
-        PreparedPrompt prepared = compressor.prepare(originalMessages, request.getTokentrim());
-        int compressedTokens = tokenCounter.countMessages(prepared.messages());
+        AgentOutcome agentOutcome = agent.apply(originalMessages, request.getTools(), request.getToolChoice());
+        int originalTokens = tokenCounter.countMessages(originalMessages)
+                + optionDocumentTokens(request.getTokentrim())
+                + countNode(request.getTools());
+        PreparedPrompt prepared = compressor.prepare(agentOutcome.messages(), request.getTokentrim());
+        int compressedTokens = tokenCounter.countMessages(prepared.messages()) + countNode(agentOutcome.tools());
         RoutingDecision decision = router.route(
                 prepared.messages(),
                 request.getModel(),
@@ -128,10 +145,13 @@ public final class ChatPipeline {
                     log.info("cache=HIT route={} model={} originalTokens={} sentTokens=0 similarity={}",
                             decision.route(), decision.model(), originalTokens,
                             String.format(Locale.US, "%.3f", hit.get().similarity()));
+                    boolean soft = runs.overSoftLimit(runId, 0);
+                    agentOutcome.tokensSaved().forEach(metrics::recordTechnique);
+                    runs.record(runId, originalTokens, 0, saved, agentOutcome.tokensSaved());
                     return new PipelineResult(
                             cached,
                             headers(request, decision, true, originalTokens, 0, saved, cost.savedUsd(), latency,
-                                    prepared.chunksSelected(), hit.get().similarity(), null),
+                                    prepared.chunksSelected(), hit.get().similarity(), null, agentOutcome, runId, soft),
                             true,
                             originalTokens,
                             0,
@@ -145,7 +165,38 @@ public final class ChatPipeline {
             }
         }
 
+        runs.checkHardLimit(runId, agentOutcome.stopForLoop() ? 0 : compressedTokens);
+        boolean soft = runs.overSoftLimit(runId, agentOutcome.stopForLoop() ? 0 : compressedTokens);
+        agentOutcome.tokensSaved().forEach(metrics::recordTechnique);
+        if (agentOutcome.stopForLoop()) {
+            int outputTokens = tokenCounter.count("Stopped because the same tool call was repeated.");
+            ChatCompletionResponse stopped = ChatCompletionResponse.of(
+                    decision.model(),
+                    "Stopped: the same tool call was repeated " + agentOutcome.loopCount()
+                            + " times. Change the arguments or finish the task.",
+                    compressedTokens,
+                    outputTokens);
+            int saved = Math.max(0, originalTokens);
+            long latency = System.nanoTime() - started;
+            metrics.recordSuccess(cacheable, false, originalTokens, 0, saved, 0, latency, decision.route(), decision.model());
+            runs.record(runId, originalTokens, 0, saved, agentOutcome.tokensSaved());
+            return new PipelineResult(
+                    stopped,
+                    headers(request, decision, false, originalTokens, 0, saved, 0, latency,
+                            prepared.chunksSelected(), null, null, agentOutcome, runId, soft),
+                    false,
+                    originalTokens,
+                    0,
+                    saved,
+                    decision.model(),
+                    decision.route(),
+                    decision.complexity(),
+                    0,
+                    prepared.chunksSelected());
+        }
+
         ChatCompletionRequest outbound = copyForUpstream(request, prepared.messages(), decision.model());
+        outbound.setTools(agentOutcome.tools());
         long upstreamStarted = System.nanoTime();
         ChatCompletionResponse response = upstream.complete(outbound);
         metrics.recordUpstream(System.nanoTime() - upstreamStarted);
@@ -171,10 +222,11 @@ public final class ChatPipeline {
                 sent,
                 saved,
                 String.format(Locale.US, "%.6f", cost.savedUsd()));
+        runs.record(runId, originalTokens, sent, saved, agentOutcome.tokensSaved());
         return new PipelineResult(
                 response,
                 headers(request, decision, false, originalTokens, sent, saved, cost.savedUsd(), latency,
-                        prepared.chunksSelected(), null, quality),
+                        prepared.chunksSelected(), null, quality, agentOutcome, runId, soft),
                 false,
                 originalTokens,
                 sent,
@@ -329,7 +381,10 @@ public final class ChatPipeline {
             long latencyNanos,
             int ragChunks,
             Double similarity,
-            Double quality
+            Double quality,
+            AgentOutcome agentOutcome,
+            String runId,
+            boolean budgetWarning
     ) {
         HttpHeaders headers = new HttpHeaders();
         boolean bypass = !cacheable(request);
@@ -350,6 +405,31 @@ public final class ChatPipeline {
         if (quality != null) {
             headers.add(TokenTrimHeaders.QUALITY, String.format(Locale.US, "%.4f", quality));
         }
+        if (agentOutcome != null) {
+            headers.add(TokenTrimHeaders.SAVED_TOOL_COMPACTION, Integer.toString(agentOutcome.saved(AgentOutcome.TOOL_COMPACTION)));
+            headers.add(TokenTrimHeaders.SAVED_SCHEMA_PRUNING, Integer.toString(agentOutcome.saved(AgentOutcome.SCHEMA_PRUNING)));
+            headers.add(TokenTrimHeaders.SAVED_LOOP_DEDUPE, Integer.toString(agentOutcome.saved(AgentOutcome.LOOP_DEDUPE)));
+            headers.add(TokenTrimHeaders.SAVED_STEP_MEMORY, Integer.toString(agentOutcome.saved(AgentOutcome.STEP_MEMORY)));
+            if (agentOutcome.loopDetected()) {
+                headers.add(TokenTrimHeaders.LOOP_DETECTED, Integer.toString(agentOutcome.loopCount()));
+            }
+        }
+        if (runId != null && !runId.isBlank()) {
+            headers.add(TokenTrimHeaders.RUN_ID, runId);
+            long cumulative = runs.projectedSent(runId, 0);
+            headers.add(TokenTrimHeaders.RUN_TOKENS, Long.toString(cumulative));
+            if (budgetWarning) {
+                headers.add(TokenTrimHeaders.BUDGET_WARNING,
+                        "soft limit of " + properties.getAgent().getRunBudget().getSoftLimitTokens() + " tokens exceeded");
+            }
+        }
         return headers;
+    }
+
+    private int countNode(JsonNode node) {
+        if (node == null || node.isNull()) {
+            return 0;
+        }
+        return tokenCounter.count(node.toString());
     }
 }

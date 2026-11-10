@@ -85,3 +85,29 @@ tokentrim:
   quality:
     enabled: false
     sample-rate: 0.0
+  agent:
+    enabled: true
+    tool-compaction:
+      enabled: true
+      default-token-budget: 256
+      hard-cap-tokens: 1500
+      max-array-items: 12
+      log-head-lines: 12
+      log-tail-lines: 12
+    schema-pruning:
+      enabled: true
+      top-k: 8
+      max-description-tokens: 48
+    loop-guard:
+      enabled: true
+      window: 8
+      repeat-threshold: 3
+      action: warn
+    step-memory:
+      enabled: true
+      token-budget: 200
+      recent-steps: 2
+    run-budget:
+      enabled: true
+      soft-limit-tokens: 100000
+      hard-limit-tokens: 500000

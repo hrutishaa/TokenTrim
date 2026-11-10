@@ -52,30 +52,35 @@ public final class PromptCompressor {
             }
         }
 
+        boolean agentTranscript = properties.getAgent().isEnabled() && isAgentTranscript(source);
         List<ChatMessage> working = new ArrayList<>();
         for (int i = 0; i < source.size(); i++) {
             ChatMessage message = source.get(i);
             boolean last = i == source.size() - 1;
-            if (useRag && message.isPlainText()) {
+            boolean lastUser = last && "user".equals(message.getRole());
+            boolean toolMessage = "tool".equals(message.getRole());
+            boolean toolCall = hasToolCalls(message);
+            if (useRag && message.isPlainText() && !(agentTranscript && (lastUser || toolMessage))) {
                 DocumentExtractor.Extraction extraction = documents.extract(message.text());
                 docs.addAll(extraction.documents());
                 message = message.withText(extraction.remaining());
             }
-            if (compress && message.isPlainText()) {
+            if (compress && message.isPlainText() && !toolMessage && !(agentTranscript && lastUser)) {
                 String text = whitespace.normalize(message.text());
                 String role = message.getRole();
-                if ("assistant".equals(role) || "system".equals(role)) {
+                if (("assistant".equals(role) || "system".equals(role)) && !toolCall) {
                     text = whitespace.normalize(boilerplate.strip(text));
                 }
                 message = message.withText(text);
             }
-            if (message.isPlainText() && message.text().isBlank() && !last) {
+            if (message.isPlainText() && message.text().isBlank() && !last && !toolCall) {
                 continue;
             }
             working.add(message);
         }
 
-        if (compress) {
+        boolean stepMemoryOwnsHistory = agentTranscript && properties.getAgent().getStepMemory().isEnabled();
+        if (compress && !stepMemoryOwnsHistory) {
             int budget = options != null && options.getHistoryTokenBudget() != null
                     ? options.getHistoryTokenBudget()
                     : properties.getCompression().getHistoryTokenBudget();
@@ -107,5 +112,18 @@ public final class PromptCompressor {
             index++;
         }
         return out;
+    }
+
+    private static boolean isAgentTranscript(List<ChatMessage> messages) {
+        for (ChatMessage message : messages) {
+            if ("tool".equals(message.getRole()) || hasToolCalls(message)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private static boolean hasToolCalls(ChatMessage message) {
+        return message.getToolCalls() != null && message.getToolCalls().isArray() && !message.getToolCalls().isEmpty();
     }
 }

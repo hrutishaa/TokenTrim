@@ -2,6 +2,7 @@ package io.tokentrim.config;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.micrometer.core.instrument.MeterRegistry;
+import io.tokentrim.agent.RunLedger;
 import io.tokentrim.cache.InMemorySemanticCache;
 import io.tokentrim.cache.PgVectorSemanticCache;
 import io.tokentrim.cache.RedisSemanticCache;
@@ -87,6 +88,11 @@ public class TokenTrimConfiguration {
     }
 
     @Bean
+    RunLedger runLedger(TokenTrimProperties properties) {
+        return new RunLedger(properties);
+    }
+
+    @Bean
     ChatPipeline chatPipeline(
             TokenTrimProperties properties,
             SemanticCache semanticCache,
@@ -95,7 +101,8 @@ public class TokenTrimConfiguration {
             TokenCounter tokenCounter,
             TokenTrimMetrics tokenTrimMetrics,
             ObjectMapper objectMapper,
-            Clock clock
+            Clock clock,
+            RunLedger runLedger
     ) {
         return new ChatPipeline(
                 properties,
@@ -109,17 +116,19 @@ public class TokenTrimConfiguration {
                 new io.tokentrim.metrics.SavingsEstimator(properties),
                 new io.tokentrim.quality.QualityChecker(embeddingModel),
                 objectMapper,
-                clock);
+                clock,
+                runLedger);
     }
 
     @Bean
     ApplicationRunner startupLogger(TokenTrimProperties properties, EmbeddingModel embeddingModel) {
         return args -> log.info(
-                "TokenTrim ready. upstreamMode={} cache={} embeddings={} routing={} tokenizer={}",
+                "TokenTrim ready. upstreamMode={} cache={} embeddings={} routing={} agent={} tokenizer={}",
                 properties.getUpstream().getMode(),
                 properties.getCache().getBackend(),
                 embeddingModel.name(),
                 properties.getRouting().isEnabled(),
+                properties.getAgent().isEnabled(),
                 properties.getTokenizer().getEncoding());
     }
 }

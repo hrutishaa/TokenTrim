@@ -132,6 +132,52 @@ Request extension (stripped before the upstream call):
 
 You can also wrap pasted context in `<document>...</document>` or `<context>...</context>` inside a message. Those blocks are removed from the prompt and scored as chunks.
 
+## Agent mode
+
+Agent mode runs on the same `POST /v1/chat/completions` pipeline when the request carries `tools`, assistant `tool_calls`, or `role: tool` results. It is on by default and does not need an API key in echo mode. The latest user message is left unchanged. A tool the model already called, a tool named by `tool_choice`, and a tool with `"required": true` are never removed from the schema.
+
+Passes, in order:
+
+1. **Tool-output compaction.** Older tool results are minified, long JSON arrays keep a prefix plus a count of omitted items, repeated log lines collapse, logs keep their head, tail, and error lines, and HTML is reduced to text. Each tool has a token budget (`tokentrim.agent.tool-compaction.per-tool-token-budget.<name>`, otherwise `default-token-budget`). The most recent tool result stays intact unless it exceeds `hard-cap-tokens`.
+2. **Loop guard.** The same tool name with normalized arguments (JSON key order and whitespace do not matter) inside `loop-guard.window` collapses older results to a one-line reference. At `repeat-threshold` the response sets `X-TokenTrim-Loop-Detected` to the repeat count. `loop-guard.action: stop` skips the upstream call.
+3. **Step memory.** Completed steps (an assistant tool call plus its tool results) that exceed `step-memory.token-budget` fold into a `Progress so far:` note. The original task, every user message, and the last `recent-steps` stay verbatim.
+4. **Schema pruning.** When more than `schema-pruning.top-k` tools are offered, only the top matches for the latest user and assistant text are sent, along with pinned tools. Long descriptions are cut to `max-description-tokens`.
+5. **Per-run budget.** Send `X-TokenTrim-Run-Id`. TokenTrim adds the tokens it actually sends to that run. Over `run-budget.soft-limit-tokens` the response includes `X-TokenTrim-Budget-Warning`. Over `hard-limit-tokens` the proxy returns HTTP 429 and does not call upstream. `GET /v1/tokentrim/runs/{id}` returns the cumulative counts.
+
+`/v1/tokentrim/stats` and Prometheus break the savings down with `tokens_saved_by_technique` / `tokentrim_tokens_saved_technique_total{technique=...}` for `tool_compaction`, `schema_pruning`, `loop_dedupe`, and `step_memory`.
+
+```bash
+TOKENTRIM_UPSTREAM_MODE=echo ./mvnw spring-boot:run
+
+curl -sD - http://localhost:8080/v1/chat/completions \
+  -H 'Content-Type: application/json' \
+  -H 'X-TokenTrim-Run-Id: demo-run' \
+  --data @samples/agent-run.json
+
+curl -s http://localhost:8080/v1/tokentrim/runs/demo-run
+```
+
+`samples/agent-run.json` is a billing-export task with 23 tools, a pretty-printed invoice dump, a long log, three identical `search_docs` calls, and HTML in the tool results. `AgentTokenSavingsBenchmarkTest` runs that file through the default settings:
+
+```text
+TokenTrim agent benchmark
+original tokens : 7353
+sent tokens     : 1000
+tokens saved    : 6353 (86.4%)
+tool_compaction : 3557
+schema_pruning  : 2361
+loop_dedupe     : 42
+step_memory     : 393
+loop header     : 3
+tools sent      : 8
+```
+
+Those technique counts are measured before the chat compressor runs, so they do not overlap. The test fails if any of the four is zero or if total savings drop under 45%.
+
+```bash
+./mvnw -Dtest=AgentTokenSavingsBenchmarkTest -Dsurefire.useFile=false test
+```
+
 ## Benchmark
 
 `TokenSavingsBenchmarkTest` builds a long system prompt, eight bloated turns, and four documents (one relevant). It then tightens the history budget to 512 and the RAG budget to 320, which is stricter than the defaults, and checks the floor below.
@@ -198,6 +244,7 @@ Prometheus metrics (Grafana-friendly names):
 - `tokentrim_routing_decisions_total{route,model}`
 - `tokentrim_request_latency_seconds`, `tokentrim_upstream_latency_seconds`
 - `tokentrim_quality_similarity`
+- `tokentrim_tokens_saved_technique_total{technique="tool_compaction|schema_pruning|loop_dedupe|step_memory"}`
 
 ```promql
 sum(rate(tokentrim_tokens_saved_total[5m]))
@@ -230,6 +277,15 @@ Defaults live in `TokenTrimProperties` and `src/main/resources/application.yml`.
 | `tokentrim.rag.token-budget` | `640` | Token cap for those chunks |
 | `tokentrim.quality.enabled` | `false` | Allows sampled baseline comparisons |
 | `tokentrim.quality.sample-rate` | `0` | Fraction of misses that also call the untouched prompt |
+| `tokentrim.agent.tool-compaction.default-token-budget` | `256` | Token budget for an older tool result |
+| `tokentrim.agent.tool-compaction.hard-cap-tokens` | `1500` | Cap for the latest tool result |
+| `tokentrim.agent.schema-pruning.top-k` | `8` | Tools kept besides pinned ones, up to this count |
+| `tokentrim.agent.loop-guard.repeat-threshold` | `3` | Repeats before `X-TokenTrim-Loop-Detected` |
+| `tokentrim.agent.loop-guard.action` | `warn` | `warn` or `stop` |
+| `tokentrim.agent.step-memory.token-budget` | `200` | Fold older steps once they pass this size |
+| `tokentrim.agent.step-memory.recent-steps` | `2` | Completed steps left verbatim |
+| `tokentrim.agent.run-budget.soft-limit-tokens` | `100000` | Warning header after this many sent tokens |
+| `tokentrim.agent.run-budget.hard-limit-tokens` | `500000` | HTTP 429 after this many sent tokens |
 
 Routes, boilerplate phrases, and prices are Java defaults so a missing YAML key does not change behavior. Replace `tokentrim.routing.routes` to point at the model names your upstream actually serves. Routes are applied in ascending `max-complexity` order.
 
@@ -268,6 +324,7 @@ src/main/java/io/tokentrim
   embed/          hashing embedder and optional OpenAI embeddings
   cache/          memory, Redis, pgvector
   route/          complexity score and model choice
+  agent/          tool compaction, schema pruning, loop guard, step memory, run budget
   pipeline/       one request, end to end
   upstream/       HTTP client and echo stand-in
   metrics/        Micrometer counters and the stats snapshot

@@ -1,0 +1,579 @@
+{
+  "model": "gpt-4o",
+  "messages": [
+    {
+      "role": "system",
+      "content": "You are a careful coding agent. Use tools before you answer."
+    },
+    {
+      "role": "user",
+      "content": "Fix the billing export job. The task id is TASK-8841. Do not change this sentence."
+    },
+    {
+      "role": "assistant",
+      "content": "",
+      "tool_calls": [
+        {
+          "id": "call_file",
+          "type": "function",
+          "function": {
+            "name": "read_file",
+            "arguments": "{\"path\": \"src/ExportJob.java\"}"
+          }
+        }
+      ]
+    },
+    {
+      "role": "tool",
+      "tool_call_id": "call_file",
+      "name": "read_file",
+      "content": "[\n  {\n    \"invoice\": \"INV-0000\",\n    \"status\": \"stuck\",\n    \"customer\": \"customer-0\",\n    \"note\": \"billing export row needs a retry because the downstream ledger timed out\"\n  },\n  {\n    \"invoice\": \"INV-0001\",\n    \"status\": \"stuck\",\n    \"customer\": \"customer-1\",\n    \"note\": \"billing export row needs a retry because the downstream ledger timed out\"\n  },\n  {\n    \"invoice\": \"INV-0002\",\n    \"status\": \"stuck\",\n    \"customer\": \"customer-2\",\n    \"note\": \"billing export row needs a retry because the downstream ledger timed out\"\n  },\n  {\n    \"invoice\": \"INV-0003\",\n    \"status\": \"stuck\",\n    \"customer\": \"customer-3\",\n    \"note\": \"billing export row needs a retry because the downstream ledger timed out\"\n  },\n  {\n    \"invoice\": \"INV-0004\",\n    \"status\": \"stuck\",\n    \"customer\": \"customer-4\",\n    \"note\": \"billing export row needs a retry because the downstream ledger timed out\"\n  },\n  {\n    \"invoice\": \"INV-0005\",\n    \"status\": \"stuck\",\n    \"customer\": \"customer-5\",\n    \"note\": \"billing export row needs a retry because the downstream ledger timed out\"\n  },\n  {\n    \"invoice\": \"INV-0006\",\n    \"status\": \"stuck\",\n    \"customer\": \"customer-6\",\n    \"note\": \"billing export row needs a retry because the downstream ledger timed out\"\n  },\n  {\n    \"invoice\": \"INV-0007\",\n    \"status\": \"stuck\",\n    \"customer\": \"customer-7\",\n    \"note\": \"billing export row needs a retry because the downstream ledger timed out\"\n  },\n  {\n    \"invoice\": \"INV-0008\",\n    \"status\": \"stuck\",\n    \"customer\": \"customer-8\",\n    \"note\": \"billing export row needs a retry because the downstream ledger timed out\"\n  },\n  {\n    \"invoice\": \"INV-0009\",\n    \"status\": \"stuck\",\n    \"customer\": \"customer-9\",\n    \"note\": \"billing export row needs a retry because the downstream ledger timed out\"\n  },\n  {\n    \"invoice\": \"INV-0010\",\n    \"status\": \"stuck\",\n    \"customer\": \"customer-10\",\n    \"note\": \"billing export row needs a retry because the downstream ledger timed out\"\n  },\n  {\n    \"invoice\": \"INV-0011\",\n    \"status\": \"stuck\",\n    \"customer\": \"customer-11\",\n    \"note\": \"billing export row needs a retry because the downstream ledger timed out\"\n  },\n  {\n    \"invoice\": \"INV-0012\",\n    \"status\": \"stuck\",\n    \"customer\": \"customer-12\",\n    \"note\": \"billing export row needs a retry because the downstream ledger timed out\"\n  },\n  {\n    \"invoice\": \"INV-0013\",\n    \"status\": \"stuck\",\n    \"customer\": \"customer-13\",\n    \"note\": \"billing export row needs a retry because the downstream ledger timed out\"\n  },\n  {\n    \"invoice\": \"INV-0014\",\n    \"status\": \"stuck\",\n    \"customer\": \"customer-14\",\n    \"note\": \"billing export row needs a retry because the downstream ledger timed out\"\n  },\n  {\n    \"invoice\": \"INV-0015\",\n    \"status\": \"stuck\",\n    \"customer\": \"customer-15\",\n    \"note\": \"billing export row needs a retry because the downstream ledger timed out\"\n  },\n  {\n    \"invoice\": \"INV-0016\",\n    \"status\": \"stuck\",\n    \"customer\": \"customer-16\",\n    \"note\": \"billing export row needs a retry because the downstream ledger timed out\"\n  },\n  {\n    \"invoice\": \"INV-0017\",\n    \"status\": \"stuck\",\n    \"customer\": \"customer-17\",\n    \"note\": \"billing export row needs a retry because the downstream ledger timed out\"\n  },\n  {\n    \"invoice\": \"INV-0018\",\n    \"status\": \"stuck\",\n    \"customer\": \"customer-18\",\n    \"note\": \"billing export row needs a retry because the downstream ledger timed out\"\n  },\n  {\n    \"invoice\": \"INV-0019\",\n    \"status\": \"stuck\",\n    \"customer\": \"customer-19\",\n    \"note\": \"billing export row needs a retry because the downstream ledger timed out\"\n  },\n  {\n    \"invoice\": \"INV-0020\",\n    \"status\": \"stuck\",\n    \"customer\": \"customer-20\",\n    \"note\": \"billing export row needs a retry because the downstream ledger timed out\"\n  },\n  {\n    \"invoice\": \"INV-0021\",\n    \"status\": \"stuck\",\n    \"customer\": \"customer-21\",\n    \"note\": \"billing export row needs a retry because the downstream ledger timed out\"\n  },\n  {\n    \"invoice\": \"INV-0022\",\n    \"status\": \"stuck\",\n    \"customer\": \"customer-22\",\n    \"note\": \"billing export row needs a retry because the downstream ledger timed out\"\n  },\n  {\n    \"invoice\": \"INV-0023\",\n    \"status\": \"stuck\",\n    \"customer\": \"customer-23\",\n    \"note\": \"billing export row needs a retry because the downstream ledger timed out\"\n  },\n  {\n    \"invoice\": \"INV-0024\",\n    \"status\": \"stuck\",\n    \"customer\": \"customer-24\",\n    \"note\": \"billing export row needs a retry because the downstream ledger timed out\"\n  },\n  {\n    \"invoice\": \"INV-0025\",\n    \"status\": \"stuck\",\n    \"customer\": \"customer-25\",\n    \"note\": \"billing export row needs a retry because the downstream ledger timed out\"\n  },\n  {\n    \"invoice\": \"INV-0026\",\n    \"status\": \"stuck\",\n    \"customer\": \"customer-26\",\n    \"note\": \"billing export row needs a retry because the downstream ledger timed out\"\n  },\n  {\n    \"invoice\": \"INV-0027\",\n    \"status\": \"stuck\",\n    \"customer\": \"customer-27\",\n    \"note\": \"billing export row needs a retry because the downstream ledger timed out\"\n  },\n  {\n    \"invoice\": \"INV-0028\",\n    \"status\": \"stuck\",\n    \"customer\": \"customer-28\",\n    \"note\": \"billing export row needs a retry because the downstream ledger timed out\"\n  },\n  {\n    \"invoice\": \"INV-0029\",\n    \"status\": \"stuck\",\n    \"customer\": \"customer-29\",\n    \"note\": \"billing export row needs a retry because the downstream ledger timed out\"\n  },\n  {\n    \"invoice\": \"INV-0030\",\n    \"status\": \"stuck\",\n    \"customer\": \"customer-30\",\n    \"note\": \"billing export row needs a retry because the downstream ledger timed out\"\n  },\n  {\n    \"invoice\": \"INV-0031\",\n    \"status\": \"stuck\",\n    \"customer\": \"customer-31\",\n    \"note\": \"billing export row needs a retry because the downstream ledger timed out\"\n  },\n  {\n    \"invoice\": \"INV-0032\",\n    \"status\": \"stuck\",\n    \"customer\": \"customer-32\",\n    \"note\": \"billing export row needs a retry because the downstream ledger timed out\"\n  },\n  {\n    \"invoice\": \"INV-0033\",\n    \"status\": \"stuck\",\n    \"customer\": \"customer-33\",\n    \"note\": \"billing export row needs a retry because the downstream ledger timed out\"\n  },\n  {\n    \"invoice\": \"INV-0034\",\n    \"status\": \"stuck\",\n    \"customer\": \"customer-34\",\n    \"note\": \"billing export row needs a retry because the downstream ledger timed out\"\n  },\n  {\n    \"invoice\": \"INV-0035\",\n    \"status\": \"stuck\",\n    \"customer\": \"customer-35\",\n    \"note\": \"billing export row needs a retry because the downstream ledger timed out\"\n  },\n  {\n    \"invoice\": \"INV-0036\",\n    \"status\": \"stuck\",\n    \"customer\": \"customer-36\",\n    \"note\": \"billing export row needs a retry because the downstream ledger timed out\"\n  },\n  {\n    \"invoice\": \"INV-0037\",\n    \"status\": \"stuck\",\n    \"customer\": \"customer-37\",\n    \"note\": \"billing export row needs a retry because the downstream ledger timed out\"\n  },\n  {\n    \"invoice\": \"INV-0038\",\n    \"status\": \"stuck\",\n    \"customer\": \"customer-38\",\n    \"note\": \"billing export row needs a retry because the downstream ledger timed out\"\n  },\n  {\n    \"invoice\": \"INV-0039\",\n    \"status\": \"stuck\",\n    \"customer\": \"customer-39\",\n    \"note\": \"billing export row needs a retry because the downstream ledger timed out\"\n  },\n  {\n    \"invoice\": \"INV-0040\",\n    \"status\": \"stuck\",\n    \"customer\": \"customer-40\",\n    \"note\": \"billing export row needs a retry because the downstream ledger timed out\"\n  },\n  {\n    \"invoice\": \"INV-0041\",\n    \"status\": \"stuck\",\n    \"customer\": \"customer-41\",\n    \"note\": \"billing export row needs a retry because the downstream ledger timed out\"\n  },\n  {\n    \"invoice\": \"INV-0042\",\n    \"status\": \"stuck\",\n    \"customer\": \"customer-42\",\n    \"note\": \"billing export row needs a retry because the downstream ledger timed out\"\n  },\n  {\n    \"invoice\": \"INV-0043\",\n    \"status\": \"stuck\",\n    \"customer\": \"customer-43\",\n    \"note\": \"billing export row needs a retry because the downstream ledger timed out\"\n  },\n  {\n    \"invoice\": \"INV-0044\",\n    \"status\": \"stuck\",\n    \"customer\": \"customer-44\",\n    \"note\": \"billing export row needs a retry because the downstream ledger timed out\"\n  },\n  {\n    \"invoice\": \"INV-0045\",\n    \"status\": \"stuck\",\n    \"customer\": \"customer-45\",\n    \"note\": \"billing export row needs a retry because the downstream ledger timed out\"\n  },\n  {\n    \"invoice\": \"INV-0046\",\n    \"status\": \"stuck\",\n    \"customer\": \"customer-46\",\n    \"note\": \"billing export row needs a retry because the downstream ledger timed out\"\n  },\n  {\n    \"invoice\": \"INV-0047\",\n    \"status\": \"stuck\",\n    \"customer\": \"customer-47\",\n    \"note\": \"billing export row needs a retry because the downstream ledger timed out\"\n  },\n  {\n    \"invoice\": \"INV-0048\",\n    \"status\": \"stuck\",\n    \"customer\": \"customer-48\",\n    \"note\": \"billing export row needs a retry because the downstream ledger timed out\"\n  },\n  {\n    \"invoice\": \"INV-0049\",\n    \"status\": \"stuck\",\n    \"customer\": \"customer-49\",\n    \"note\": \"billing export row needs a retry because the downstream ledger timed out\"\n  },\n  {\n    \"invoice\": \"INV-0050\",\n    \"status\": \"stuck\",\n    \"customer\": \"customer-50\",\n    \"note\": \"billing export row needs a retry because the downstream ledger timed out\"\n  },\n  {\n    \"invoice\": \"INV-0051\",\n    \"status\": \"stuck\",\n    \"customer\": \"customer-51\",\n    \"note\": \"billing export row needs a retry because the downstream ledger timed out\"\n  },\n  {\n    \"invoice\": \"INV-0052\",\n    \"status\": \"stuck\",\n    \"customer\": \"customer-52\",\n    \"note\": \"billing export row needs a retry because the downstream ledger timed out\"\n  },\n  {\n    \"invoice\": \"INV-0053\",\n    \"status\": \"stuck\",\n    \"customer\": \"customer-53\",\n    \"note\": \"billing export row needs a retry because the downstream ledger timed out\"\n  },\n  {\n    \"invoice\": \"INV-0054\",\n    \"status\": \"stuck\",\n    \"customer\": \"customer-54\",\n    \"note\": \"billing export row needs a retry because the downstream ledger timed out\"\n  },\n  {\n    \"invoice\": \"INV-0055\",\n    \"status\": \"stuck\",\n    \"customer\": \"customer-55\",\n    \"note\": \"billing export row needs a retry because the downstream ledger timed out\"\n  },\n  {\n    \"invoice\": \"INV-0056\",\n    \"status\": \"stuck\",\n    \"customer\": \"customer-56\",\n    \"note\": \"billing export row needs a retry because the downstream ledger timed out\"\n  },\n  {\n    \"invoice\": \"INV-0057\",\n    \"status\": \"stuck\",\n    \"customer\": \"customer-57\",\n    \"note\": \"billing export row needs a retry because the downstream ledger timed out\"\n  },\n  {\n    \"invoice\": \"INV-0058\",\n    \"status\": \"stuck\",\n    \"customer\": \"customer-58\",\n    \"note\": \"billing export row needs a retry because the downstream ledger timed out\"\n  },\n  {\n    \"invoice\": \"INV-0059\",\n    \"status\": \"stuck\",\n    \"customer\": \"customer-59\",\n    \"note\": \"billing export row needs a retry because the downstream ledger timed out\"\n  }\n]"
+    },
+    {
+      "role": "assistant",
+      "content": "",
+      "tool_calls": [
+        {
+          "id": "call_logs",
+          "type": "function",
+          "function": {
+            "name": "read_logs",
+            "arguments": "{\"service\": \"export-worker\"}"
+          }
+        }
+      ]
+    },
+    {
+      "role": "tool",
+      "tool_call_id": "call_logs",
+      "name": "read_logs",
+      "content": "2026-11-05T10:00:00Z INFO heartbeat export-worker\n2026-11-05T10:00:01Z INFO heartbeat export-worker\n2026-11-05T10:00:02Z INFO heartbeat export-worker\n2026-11-05T10:00:03Z INFO heartbeat export-worker\n2026-11-05T10:00:04Z INFO heartbeat export-worker\n2026-11-05T10:00:05Z INFO heartbeat export-worker\n2026-11-05T10:00:06Z INFO heartbeat export-worker\n2026-11-05T10:00:07Z INFO heartbeat export-worker\n2026-11-05T10:00:08Z INFO heartbeat export-worker\n2026-11-05T10:00:09Z INFO heartbeat export-worker\n2026-11-05T10:00:10Z INFO heartbeat export-worker\n2026-11-05T10:00:11Z INFO heartbeat export-worker\n2026-11-05T10:00:12Z INFO heartbeat export-worker\n2026-11-05T10:00:13Z INFO heartbeat export-worker\n2026-11-05T10:00:14Z INFO heartbeat export-worker\n2026-11-05T10:00:15Z INFO heartbeat export-worker\n2026-11-05T10:00:16Z INFO heartbeat export-worker\n2026-11-05T10:00:17Z INFO heartbeat export-worker\n2026-11-05T10:00:18Z INFO heartbeat export-worker\n2026-11-05T10:00:19Z INFO heartbeat export-worker\n2026-11-05T10:00:20Z INFO heartbeat export-worker\n2026-11-05T10:00:21Z INFO heartbeat export-worker\n2026-11-05T10:00:22Z INFO heartbeat export-worker\n2026-11-05T10:00:23Z INFO heartbeat export-worker\n2026-11-05T10:00:24Z INFO heartbeat export-worker\n2026-11-05T10:00:25Z INFO heartbeat export-worker\n2026-11-05T10:00:26Z INFO heartbeat export-worker\n2026-11-05T10:00:27Z INFO heartbeat export-worker\n2026-11-05T10:00:28Z INFO heartbeat export-worker\n2026-11-05T10:00:29Z INFO heartbeat export-worker\n2026-11-05T10:00:30Z INFO heartbeat export-worker\n2026-11-05T10:00:31Z INFO heartbeat export-worker\n2026-11-05T10:00:32Z INFO heartbeat export-worker\n2026-11-05T10:00:33Z INFO heartbeat export-worker\n2026-11-05T10:00:34Z INFO heartbeat export-worker\n2026-11-05T10:00:35Z INFO heartbeat export-worker\n2026-11-05T10:00:36Z INFO heartbeat export-worker\n2026-11-05T10:00:37Z INFO heartbeat export-worker\n2026-11-05T10:00:38Z INFO heartbeat export-worker\n2026-11-05T10:00:39Z INFO heartbeat export-worker\n2026-11-05T10:01:00Z ERROR billing export failed on invoice INV-0042: ledger timeout\n2026-11-05T10:01:01Z ERROR java.lang.IllegalStateException: export batch 7 aborted\n2026-11-05T10:02:00Z INFO batch flush 0\n2026-11-05T10:02:01Z INFO batch flush 1\n2026-11-05T10:02:02Z INFO batch flush 2\n2026-11-05T10:02:03Z INFO batch flush 3\n2026-11-05T10:02:04Z INFO batch flush 4\n2026-11-05T10:02:05Z INFO batch flush 5\n2026-11-05T10:02:06Z INFO batch flush 6\n2026-11-05T10:02:07Z INFO batch flush 7\n2026-11-05T10:02:08Z INFO batch flush 8\n2026-11-05T10:02:09Z INFO batch flush 9\n2026-11-05T10:02:10Z INFO batch flush 10\n2026-11-05T10:02:11Z INFO batch flush 11\n2026-11-05T10:02:12Z INFO batch flush 12\n2026-11-05T10:02:13Z INFO batch flush 13\n2026-11-05T10:02:14Z INFO batch flush 14"
+    },
+    {
+      "role": "assistant",
+      "content": "",
+      "tool_calls": [
+        {
+          "id": "call_s1",
+          "type": "function",
+          "function": {
+            "name": "search_docs",
+            "arguments": "{\"query\": \"billing export retry\"}"
+          }
+        }
+      ]
+    },
+    {
+      "role": "tool",
+      "tool_call_id": "call_s1",
+      "name": "search_docs",
+      "content": "<html><body>\n<h1>Billing export runbook</h1>\n<p>The export job publishes invoices to the ledger. When the ledger times out, retry batch 7.</p>\n<ul><li>Check ExportJob.java</li><li>Requeue invoice INV-0042</li></ul>\n</body></html>"
+    },
+    {
+      "role": "assistant",
+      "content": "",
+      "tool_calls": [
+        {
+          "id": "call_s2",
+          "type": "function",
+          "function": {
+            "name": "search_docs",
+            "arguments": "{\n  \"query\": \"billing export retry\"\n}"
+          }
+        }
+      ]
+    },
+    {
+      "role": "tool",
+      "tool_call_id": "call_s2",
+      "name": "search_docs",
+      "content": "<html><body>\n<h1>Billing export runbook</h1>\n<p>The export job publishes invoices to the ledger. When the ledger times out, retry batch 7.</p>\n<ul><li>Check ExportJob.java</li><li>Requeue invoice INV-0042</li></ul>\n</body></html>"
+    },
+    {
+      "role": "assistant",
+      "content": "",
+      "tool_calls": [
+        {
+          "id": "call_s3",
+          "type": "function",
+          "function": {
+            "name": "search_docs",
+            "arguments": "{\"query\": \"billing export retry\"}"
+          }
+        }
+      ]
+    },
+    {
+      "role": "tool",
+      "tool_call_id": "call_s3",
+      "name": "search_docs",
+      "content": "<html><body>\n<h1>Billing export runbook</h1>\n<p>The export job publishes invoices to the ledger. When the ledger times out, retry batch 7.</p>\n<ul><li>Check ExportJob.java</li><li>Requeue invoice INV-0042</li></ul>\n</body></html>"
+    },
+    {
+      "role": "user",
+      "content": "What is the next concrete step for TASK-8841?"
+    }
+  ],
+  "tools": [
+    {
+      "type": "function",
+      "required": false,
+      "function": {
+        "name": "read_file",
+        "description": "Read a source file from the repository, especially billing export code.",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "query": {
+              "type": "string",
+              "description": "What to look up."
+            }
+          },
+          "required": [
+            "query"
+          ]
+        }
+      }
+    },
+    {
+      "type": "function",
+      "required": false,
+      "function": {
+        "name": "read_logs",
+        "description": "Read application logs for the billing export job and return error lines.",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "query": {
+              "type": "string",
+              "description": "What to look up."
+            }
+          },
+          "required": [
+            "query"
+          ]
+        }
+      }
+    },
+    {
+      "type": "function",
+      "required": false,
+      "function": {
+        "name": "search_docs",
+        "description": "Search internal documentation about the billing export pipeline.",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "query": {
+              "type": "string",
+              "description": "What to look up."
+            }
+          },
+          "required": [
+            "query"
+          ]
+        }
+      }
+    },
+    {
+      "type": "function",
+      "required": true,
+      "function": {
+        "name": "audit_log",
+        "description": "Required compliance archive. Keep this tool even when the step is about invoices.  Additional background that is not needed for the current step. Additional background that is not needed for the current step. Additional background that is not needed for the current step. Additional background that is not needed for the current step. Additional background that is not needed for the current step. Additional background that is not needed for the current step. Additional background that is not needed for the current step. Additional background that is not needed for the current step.",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "query": {
+              "type": "string",
+              "description": "What to look up."
+            }
+          },
+          "required": [
+            "query"
+          ]
+        }
+      }
+    },
+    {
+      "type": "function",
+      "required": false,
+      "function": {
+        "name": "query_invoices",
+        "description": "Query invoice rows that the billing export failed to publish.",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "query": {
+              "type": "string",
+              "description": "What to look up."
+            }
+          },
+          "required": [
+            "query"
+          ]
+        }
+      }
+    },
+    {
+      "type": "function",
+      "required": false,
+      "function": {
+        "name": "weather_forecast",
+        "description": "Forecast the weather, humidity, and wind for a city. This does not inspect source code or invoices. Additional background that is not needed for the current step. Additional background that is not needed for the current step. Additional background that is not needed for the current step. Additional background that is not needed for the current step. Additional background that is not needed for the current step. Additional background that is not needed for the current step. Additional background that is not needed for the current step. Additional background that is not needed for the current step.",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "query": {
+              "type": "string",
+              "description": "What to look up."
+            }
+          },
+          "required": [
+            "query"
+          ]
+        }
+      }
+    },
+    {
+      "type": "function",
+      "required": false,
+      "function": {
+        "name": "sports_scores",
+        "description": "Look up professional sports scores, standings, and injury reports for unrelated games. Additional background that is not needed for the current step. Additional background that is not needed for the current step. Additional background that is not needed for the current step. Additional background that is not needed for the current step. Additional background that is not needed for the current step. Additional background that is not needed for the current step. Additional background that is not needed for the current step. Additional background that is not needed for the current step.",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "query": {
+              "type": "string",
+              "description": "What to look up."
+            }
+          },
+          "required": [
+            "query"
+          ]
+        }
+      }
+    },
+    {
+      "type": "function",
+      "required": false,
+      "function": {
+        "name": "sourdough_recipe",
+        "description": "Bake sourdough bread with flour, water, and salt. Stretch and fold the dough. Additional background that is not needed for the current step. Additional background that is not needed for the current step. Additional background that is not needed for the current step. Additional background that is not needed for the current step. Additional background that is not needed for the current step. Additional background that is not needed for the current step. Additional background that is not needed for the current step. Additional background that is not needed for the current step.",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "query": {
+              "type": "string",
+              "description": "What to look up."
+            }
+          },
+          "required": [
+            "query"
+          ]
+        }
+      }
+    },
+    {
+      "type": "function",
+      "required": false,
+      "function": {
+        "name": "travel_itinerary",
+        "description": "Plan flights and hotels for a vacation. Not used for billing systems. Additional background that is not needed for the current step. Additional background that is not needed for the current step. Additional background that is not needed for the current step. Additional background that is not needed for the current step. Additional background that is not needed for the current step. Additional background that is not needed for the current step. Additional background that is not needed for the current step. Additional background that is not needed for the current step.",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "query": {
+              "type": "string",
+              "description": "What to look up."
+            }
+          },
+          "required": [
+            "query"
+          ]
+        }
+      }
+    },
+    {
+      "type": "function",
+      "required": false,
+      "function": {
+        "name": "music_lyrics",
+        "description": "Find song lyrics and album credits for a music catalog. Additional background that is not needed for the current step. Additional background that is not needed for the current step. Additional background that is not needed for the current step. Additional background that is not needed for the current step. Additional background that is not needed for the current step. Additional background that is not needed for the current step. Additional background that is not needed for the current step. Additional background that is not needed for the current step.",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "query": {
+              "type": "string",
+              "description": "What to look up."
+            }
+          },
+          "required": [
+            "query"
+          ]
+        }
+      }
+    },
+    {
+      "type": "function",
+      "required": false,
+      "function": {
+        "name": "calorie_lookup",
+        "description": "Estimate calories in a meal. Unrelated to export jobs. Additional background that is not needed for the current step. Additional background that is not needed for the current step. Additional background that is not needed for the current step. Additional background that is not needed for the current step. Additional background that is not needed for the current step. Additional background that is not needed for the current step. Additional background that is not needed for the current step. Additional background that is not needed for the current step.",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "query": {
+              "type": "string",
+              "description": "What to look up."
+            }
+          },
+          "required": [
+            "query"
+          ]
+        }
+      }
+    },
+    {
+      "type": "function",
+      "required": false,
+      "function": {
+        "name": "translate_poem",
+        "description": "Translate a poem into French while preserving rhyme. Additional background that is not needed for the current step. Additional background that is not needed for the current step. Additional background that is not needed for the current step. Additional background that is not needed for the current step. Additional background that is not needed for the current step. Additional background that is not needed for the current step. Additional background that is not needed for the current step. Additional background that is not needed for the current step.",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "query": {
+              "type": "string",
+              "description": "What to look up."
+            }
+          },
+          "required": [
+            "query"
+          ]
+        }
+      }
+    },
+    {
+      "type": "function",
+      "required": false,
+      "function": {
+        "name": "stock_quote",
+        "description": "Fetch a public stock quote and the day's trading volume. Additional background that is not needed for the current step. Additional background that is not needed for the current step. Additional background that is not needed for the current step. Additional background that is not needed for the current step. Additional background that is not needed for the current step. Additional background that is not needed for the current step. Additional background that is not needed for the current step. Additional background that is not needed for the current step.",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "query": {
+              "type": "string",
+              "description": "What to look up."
+            }
+          },
+          "required": [
+            "query"
+          ]
+        }
+      }
+    },
+    {
+      "type": "function",
+      "required": false,
+      "function": {
+        "name": "plant_care",
+        "description": "Advise on watering houseplants and identifying leaf spots. Additional background that is not needed for the current step. Additional background that is not needed for the current step. Additional background that is not needed for the current step. Additional background that is not needed for the current step. Additional background that is not needed for the current step. Additional background that is not needed for the current step. Additional background that is not needed for the current step. Additional background that is not needed for the current step.",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "query": {
+              "type": "string",
+              "description": "What to look up."
+            }
+          },
+          "required": [
+            "query"
+          ]
+        }
+      }
+    },
+    {
+      "type": "function",
+      "required": false,
+      "function": {
+        "name": "movie_showtimes",
+        "description": "List movie showtimes at a nearby theater. Additional background that is not needed for the current step. Additional background that is not needed for the current step. Additional background that is not needed for the current step. Additional background that is not needed for the current step. Additional background that is not needed for the current step. Additional background that is not needed for the current step. Additional background that is not needed for the current step. Additional background that is not needed for the current step.",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "query": {
+              "type": "string",
+              "description": "What to look up."
+            }
+          },
+          "required": [
+            "query"
+          ]
+        }
+      }
+    },
+    {
+      "type": "function",
+      "required": false,
+      "function": {
+        "name": "chess_opening",
+        "description": "Recommend a chess opening from a position. Additional background that is not needed for the current step. Additional background that is not needed for the current step. Additional background that is not needed for the current step. Additional background that is not needed for the current step. Additional background that is not needed for the current step. Additional background that is not needed for the current step. Additional background that is not needed for the current step. Additional background that is not needed for the current step.",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "query": {
+              "type": "string",
+              "description": "What to look up."
+            }
+          },
+          "required": [
+            "query"
+          ]
+        }
+      }
+    },
+    {
+      "type": "function",
+      "required": false,
+      "function": {
+        "name": "knit_pattern",
+        "description": "Generate a knitting pattern for a scarf. Additional background that is not needed for the current step. Additional background that is not needed for the current step. Additional background that is not needed for the current step. Additional background that is not needed for the current step. Additional background that is not needed for the current step. Additional background that is not needed for the current step. Additional background that is not needed for the current step. Additional background that is not needed for the current step.",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "query": {
+              "type": "string",
+              "description": "What to look up."
+            }
+          },
+          "required": [
+            "query"
+          ]
+        }
+      }
+    },
+    {
+      "type": "function",
+      "required": false,
+      "function": {
+        "name": "horoscope",
+        "description": "Write a horoscope. Do not use this for software. Additional background that is not needed for the current step. Additional background that is not needed for the current step. Additional background that is not needed for the current step. Additional background that is not needed for the current step. Additional background that is not needed for the current step. Additional background that is not needed for the current step. Additional background that is not needed for the current step. Additional background that is not needed for the current step.",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "query": {
+              "type": "string",
+              "description": "What to look up."
+            }
+          },
+          "required": [
+            "query"
+          ]
+        }
+      }
+    },
+    {
+      "type": "function",
+      "required": false,
+      "function": {
+        "name": "parking_rules",
+        "description": "Explain street parking rules for a city. Additional background that is not needed for the current step. Additional background that is not needed for the current step. Additional background that is not needed for the current step. Additional background that is not needed for the current step. Additional background that is not needed for the current step. Additional background that is not needed for the current step. Additional background that is not needed for the current step. Additional background that is not needed for the current step.",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "query": {
+              "type": "string",
+              "description": "What to look up."
+            }
+          },
+          "required": [
+            "query"
+          ]
+        }
+      }
+    },
+    {
+      "type": "function",
+      "required": false,
+      "function": {
+        "name": "cocktail_menu",
+        "description": "Suggest a cocktail recipe from ingredients on hand. Additional background that is not needed for the current step. Additional background that is not needed for the current step. Additional background that is not needed for the current step. Additional background that is not needed for the current step. Additional background that is not needed for the current step. Additional background that is not needed for the current step. Additional background that is not needed for the current step. Additional background that is not needed for the current step.",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "query": {
+              "type": "string",
+              "description": "What to look up."
+            }
+          },
+          "required": [
+            "query"
+          ]
+        }
+      }
+    },
+    {
+      "type": "function",
+      "required": false,
+      "function": {
+        "name": "pet_training",
+        "description": "Give dog training tips for recall and leash walking. Additional background that is not needed for the current step. Additional background that is not needed for the current step. Additional background that is not needed for the current step. Additional background that is not needed for the current step. Additional background that is not needed for the current step. Additional background that is not needed for the current step. Additional background that is not needed for the current step. Additional background that is not needed for the current step.",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "query": {
+              "type": "string",
+              "description": "What to look up."
+            }
+          },
+          "required": [
+            "query"
+          ]
+        }
+      }
+    },
+    {
+      "type": "function",
+      "required": false,
+      "function": {
+        "name": "garden_soil",
+        "description": "Recommend soil mix for tomatoes and herbs. Additional background that is not needed for the current step. Additional background that is not needed for the current step. Additional background that is not needed for the current step. Additional background that is not needed for the current step. Additional background that is not needed for the current step. Additional background that is not needed for the current step. Additional background that is not needed for the current step. Additional background that is not needed for the current step.",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "query": {
+              "type": "string",
+              "description": "What to look up."
+            }
+          },
+          "required": [
+            "query"
+          ]
+        }
+      }
+    },
+    {
+      "type": "function",
+      "required": false,
+      "function": {
+        "name": "airline_seat",
+        "description": "Choose an airline seat based on legroom. Additional background that is not needed for the current step. Additional background that is not needed for the current step. Additional background that is not needed for the current step. Additional background that is not needed for the current step. Additional background that is not needed for the current step. Additional background that is not needed for the current step. Additional background that is not needed for the current step. Additional background that is not needed for the current step.",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "query": {
+              "type": "string",
+              "description": "What to look up."
+            }
+          },
+          "required": [
+            "query"
+          ]
+        }
+      }
+    }
+  ]
+}

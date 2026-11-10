@@ -6,6 +6,10 @@ import io.micrometer.core.instrument.MeterRegistry;
 import io.micrometer.core.instrument.Timer;
 import io.tokentrim.api.dto.StatsSnapshot;
 
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.DoubleAdder;
 import java.util.concurrent.atomic.LongAdder;
@@ -33,6 +37,9 @@ public final class TokenTrimMetrics {
     private final LongAdder failureCount = new LongAdder();
     private final LongAdder latencyNanos = new LongAdder();
     private final DoubleAdder costSum = new DoubleAdder();
+    private final ConcurrentHashMap<String, LongAdder> techniqueSaved = new ConcurrentHashMap<>();
+    private static final List<String> TECHNIQUES = List.of(
+            "tool_compaction", "schema_pruning", "loop_dedupe", "step_memory");
 
     public TokenTrimMetrics(MeterRegistry registry) {
         this.registry = registry;
@@ -115,6 +122,18 @@ public final class TokenTrimMetrics {
         quality.record(similarity);
     }
 
+    public void recordTechnique(String technique, int saved) {
+        if (technique == null || saved <= 0) {
+            return;
+        }
+        Counter.builder("tokentrim.tokens.saved.technique")
+                .tag("technique", technique)
+                .description("Tokens removed by one agent-mode pass")
+                .register(registry)
+                .increment(saved);
+        techniqueSaved.computeIfAbsent(technique, ignored -> new LongAdder()).add(saved);
+    }
+
     public void recordFailure(long nanos) {
         failures.increment();
         failureCount.increment();
@@ -142,8 +161,18 @@ public final class TokenTrimMetrics {
                 savedSum.sum(),
                 costSum.sum(),
                 average,
-                failureCount.sum()
+                failureCount.sum(),
+                techniqueSnapshot()
         );
+    }
+
+    private Map<String, Long> techniqueSnapshot() {
+        Map<String, Long> snapshot = new LinkedHashMap<>();
+        for (String technique : TECHNIQUES) {
+            LongAdder adder = techniqueSaved.get(technique);
+            snapshot.put(technique, adder == null ? 0L : adder.sum());
+        }
+        return snapshot;
     }
 
     public void reset() {
@@ -157,5 +186,6 @@ public final class TokenTrimMetrics {
         failureCount.reset();
         latencyNanos.reset();
         costSum.reset();
+        techniqueSaved.values().forEach(LongAdder::reset);
     }
 }

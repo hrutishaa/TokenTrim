@@ -12,6 +12,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import jakarta.servlet.http.HttpServletRequest;
+
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -30,7 +32,7 @@ public class ChatCompletionsController {
     }
 
     @PostMapping(path = "/chat/completions", consumes = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<?> complete(@RequestBody ChatCompletionRequest request) {
+    public ResponseEntity<?> complete(@RequestBody ChatCompletionRequest request, HttpServletRequest httpRequest) {
         if (request.getMessages() == null || request.getMessages().isEmpty()) {
             return ResponseEntity.badRequest().body(Errors.of(
                     "messages is required and must contain at least one message",
@@ -41,7 +43,8 @@ public class ChatCompletionsController {
                     "stream=true is not supported. TokenTrim caches and measures full completions; omit stream or set it to false.",
                     "invalid_request_error"));
         }
-        PipelineResult result = pipeline.execute(request);
+        String runId = httpRequest.getHeader(TokenTrimHeaders.RUN_ID);
+        PipelineResult result = pipeline.execute(request, runId);
         return ResponseEntity.ok().headers(result.headers()).body(result.response());
     }
 

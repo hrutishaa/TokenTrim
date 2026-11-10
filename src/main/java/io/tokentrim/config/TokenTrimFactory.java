@@ -2,6 +2,7 @@ package io.tokentrim.config;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.micrometer.core.instrument.MeterRegistry;
+import io.tokentrim.agent.RunLedger;
 import io.tokentrim.cache.SemanticCache;
 import io.tokentrim.compress.BoilerplateStripper;
 import io.tokentrim.compress.DocumentExtractor;
@@ -94,7 +95,8 @@ public final class TokenTrimFactory {
                 new SavingsEstimator(properties),
                 new QualityChecker(embeddings),
                 objectMapper,
-                clock);
+                clock,
+                new RunLedger(properties));
     }
 
     public static RestClient restClient(TokenTrimProperties properties) {

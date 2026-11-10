@@ -6,6 +6,7 @@ import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.NullNode;
 import com.fasterxml.jackson.databind.node.TextNode;
@@ -26,6 +27,12 @@ public final class ChatMessage {
     private String role;
     private JsonNode content;
     private String name;
+
+    @JsonProperty("tool_call_id")
+    private String toolCallId;
+
+    @JsonProperty("tool_calls")
+    private JsonNode toolCalls;
 
     @JsonIgnore
     private Map<String, Object> additionalProperties = new LinkedHashMap<>();
@@ -71,6 +78,22 @@ public final class ChatMessage {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public String getToolCallId() {
+        return toolCallId;
+    }
+
+    public void setToolCallId(String toolCallId) {
+        this.toolCallId = toolCallId;
+    }
+
+    public JsonNode getToolCalls() {
+        return toolCalls;
+    }
+
+    public void setToolCalls(JsonNode toolCalls) {
+        this.toolCalls = toolCalls;
     }
 
     @JsonAnySetter
@@ -127,6 +150,8 @@ public final class ChatMessage {
         copy.role = role;
         copy.name = name;
         copy.content = content;
+        copy.toolCallId = toolCallId;
+        copy.toolCalls = toolCalls;
         copy.additionalProperties = new LinkedHashMap<>(additionalProperties);
         return copy;
     }

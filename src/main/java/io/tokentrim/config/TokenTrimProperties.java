@@ -25,6 +25,7 @@ public class TokenTrimProperties {
     private final Rag rag = new Rag();
     private final Quality quality = new Quality();
     private final Pricing pricing = new Pricing();
+    private final Agent agent = new Agent();
 
     public static TokenTrimProperties createDefault() {
         return new TokenTrimProperties();
@@ -68,6 +69,10 @@ public class TokenTrimProperties {
 
     public Pricing getPricing() {
         return pricing;
+    }
+
+    public Agent getAgent() {
+        return agent;
     }
 
     public static class Upstream {
@@ -566,6 +571,246 @@ public class TokenTrimProperties {
 
         public void setOutputPerMillion(double outputPerMillion) {
             this.outputPerMillion = outputPerMillion;
+        }
+    }
+
+    public static class Agent {
+        private boolean enabled = true;
+        private final ToolCompaction toolCompaction = new ToolCompaction();
+        private final SchemaPruning schemaPruning = new SchemaPruning();
+        private final LoopGuardSettings loopGuard = new LoopGuardSettings();
+        private final StepMemorySettings stepMemory = new StepMemorySettings();
+        private final RunBudget runBudget = new RunBudget();
+
+        public boolean isEnabled() {
+            return enabled;
+        }
+
+        public void setEnabled(boolean enabled) {
+            this.enabled = enabled;
+        }
+
+        public ToolCompaction getToolCompaction() {
+            return toolCompaction;
+        }
+
+        public SchemaPruning getSchemaPruning() {
+            return schemaPruning;
+        }
+
+        public LoopGuardSettings getLoopGuard() {
+            return loopGuard;
+        }
+
+        public StepMemorySettings getStepMemory() {
+            return stepMemory;
+        }
+
+        public RunBudget getRunBudget() {
+            return runBudget;
+        }
+    }
+
+    public static class ToolCompaction {
+        private boolean enabled = true;
+        private int defaultTokenBudget = 256;
+        private int hardCapTokens = 1500;
+        private int maxArrayItems = 12;
+        private int logHeadLines = 12;
+        private int logTailLines = 12;
+        private Map<String, Integer> perToolTokenBudget = new LinkedHashMap<>();
+
+        public boolean isEnabled() {
+            return enabled;
+        }
+
+        public void setEnabled(boolean enabled) {
+            this.enabled = enabled;
+        }
+
+        public int getDefaultTokenBudget() {
+            return defaultTokenBudget;
+        }
+
+        public void setDefaultTokenBudget(int defaultTokenBudget) {
+            this.defaultTokenBudget = defaultTokenBudget;
+        }
+
+        public int getHardCapTokens() {
+            return hardCapTokens;
+        }
+
+        public void setHardCapTokens(int hardCapTokens) {
+            this.hardCapTokens = hardCapTokens;
+        }
+
+        public int getMaxArrayItems() {
+            return maxArrayItems;
+        }
+
+        public void setMaxArrayItems(int maxArrayItems) {
+            this.maxArrayItems = maxArrayItems;
+        }
+
+        public int getLogHeadLines() {
+            return logHeadLines;
+        }
+
+        public void setLogHeadLines(int logHeadLines) {
+            this.logHeadLines = logHeadLines;
+        }
+
+        public int getLogTailLines() {
+            return logTailLines;
+        }
+
+        public void setLogTailLines(int logTailLines) {
+            this.logTailLines = logTailLines;
+        }
+
+        public Map<String, Integer> getPerToolTokenBudget() {
+            return perToolTokenBudget;
+        }
+
+        public void setPerToolTokenBudget(Map<String, Integer> perToolTokenBudget) {
+            this.perToolTokenBudget = perToolTokenBudget;
+        }
+
+        public int budgetFor(String toolName) {
+            if (toolName != null && perToolTokenBudget != null && perToolTokenBudget.containsKey(toolName)) {
+                return Math.max(32, perToolTokenBudget.get(toolName));
+            }
+            return Math.max(32, defaultTokenBudget);
+        }
+    }
+
+    public static class SchemaPruning {
+        private boolean enabled = true;
+        private int topK = 8;
+        private int maxDescriptionTokens = 48;
+
+        public boolean isEnabled() {
+            return enabled;
+        }
+
+        public void setEnabled(boolean enabled) {
+            this.enabled = enabled;
+        }
+
+        public int getTopK() {
+            return topK;
+        }
+
+        public void setTopK(int topK) {
+            this.topK = topK;
+        }
+
+        public int getMaxDescriptionTokens() {
+            return maxDescriptionTokens;
+        }
+
+        public void setMaxDescriptionTokens(int maxDescriptionTokens) {
+            this.maxDescriptionTokens = maxDescriptionTokens;
+        }
+    }
+
+    public static class LoopGuardSettings {
+        private boolean enabled = true;
+        private int window = 8;
+        private int repeatThreshold = 3;
+        /** {@code warn} adds a header. {@code stop} skips the upstream call. */
+        private String action = "warn";
+
+        public boolean isEnabled() {
+            return enabled;
+        }
+
+        public void setEnabled(boolean enabled) {
+            this.enabled = enabled;
+        }
+
+        public int getWindow() {
+            return window;
+        }
+
+        public void setWindow(int window) {
+            this.window = window;
+        }
+
+        public int getRepeatThreshold() {
+            return repeatThreshold;
+        }
+
+        public void setRepeatThreshold(int repeatThreshold) {
+            this.repeatThreshold = repeatThreshold;
+        }
+
+        public String getAction() {
+            return action;
+        }
+
+        public void setAction(String action) {
+            this.action = action;
+        }
+    }
+
+    public static class StepMemorySettings {
+        private boolean enabled = true;
+        private int tokenBudget = 200;
+        private int recentSteps = 2;
+
+        public boolean isEnabled() {
+            return enabled;
+        }
+
+        public void setEnabled(boolean enabled) {
+            this.enabled = enabled;
+        }
+
+        public int getTokenBudget() {
+            return tokenBudget;
+        }
+
+        public void setTokenBudget(int tokenBudget) {
+            this.tokenBudget = tokenBudget;
+        }
+
+        public int getRecentSteps() {
+            return recentSteps;
+        }
+
+        public void setRecentSteps(int recentSteps) {
+            this.recentSteps = recentSteps;
+        }
+    }
+
+    public static class RunBudget {
+        private boolean enabled = true;
+        private long softLimitTokens = 100_000;
+        private long hardLimitTokens = 500_000;
+
+        public boolean isEnabled() {
+            return enabled;
+        }
+
+        public void setEnabled(boolean enabled) {
+            this.enabled = enabled;
+        }
+
+        public long getSoftLimitTokens() {
+            return softLimitTokens;
+        }
+
+        public void setSoftLimitTokens(long softLimitTokens) {
+            this.softLimitTokens = softLimitTokens;
+        }
+
+        public long getHardLimitTokens() {
+            return hardLimitTokens;
+        }
+
+        public void setHardLimitTokens(long hardLimitTokens) {
+            this.hardLimitTokens = hardLimitTokens;
         }
     }
 }

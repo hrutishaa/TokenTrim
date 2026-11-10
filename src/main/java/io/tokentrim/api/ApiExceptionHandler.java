@@ -1,5 +1,6 @@
 package io.tokentrim.api;
 
+import io.tokentrim.agent.RunBudgetExceededException;
 import io.tokentrim.upstream.UpstreamException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -31,6 +32,12 @@ public class ApiExceptionHandler {
         return ResponseEntity.status(exception.status())
                 .contentType(MediaType.APPLICATION_JSON)
                 .body(body);
+    }
+
+    @ExceptionHandler(RunBudgetExceededException.class)
+    public ResponseEntity<?> budget(RunBudgetExceededException exception) {
+        log.info("Run budget hard limit: {}", exception.getMessage());
+        return ResponseEntity.status(429).body(Errors.of(exception.getMessage(), "rate_limit_error"));
     }
 
     @ExceptionHandler(HttpMessageNotReadableException.class)

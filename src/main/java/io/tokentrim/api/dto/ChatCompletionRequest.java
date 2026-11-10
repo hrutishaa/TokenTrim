@@ -108,6 +108,14 @@ public class ChatCompletionRequest {
         return tools;
     }
 
+    public void setTools(JsonNode tools) {
+        this.tools = tools;
+    }
+
+    public JsonNode getToolChoice() {
+        return toolChoice;
+    }
+
     public TokenTrimOptions getTokentrim() {
         return tokentrim;
     }

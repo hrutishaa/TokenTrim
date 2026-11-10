@@ -2,6 +2,7 @@ package io.tokentrim;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.micrometer.core.instrument.simple.SimpleMeterRegistry;
+import io.tokentrim.agent.RunLedger;
 import io.tokentrim.cache.InMemorySemanticCache;
 import io.tokentrim.config.TokenTrimFactory;
 import io.tokentrim.config.TokenTrimProperties;
@@ -23,6 +24,7 @@ public final class TestRig {
     public final TokenTrimMetrics metrics;
     public final ChatPipeline pipeline;
     public final ObjectMapper objectMapper;
+    public final RunLedger runs;
 
     public TestRig() {
         this(TokenTrimProperties.createDefault());
@@ -36,6 +38,7 @@ public final class TestRig {
         this.upstream = new CountingUpstream(new EchoUpstreamChatClient(tokenCounter));
         this.metrics = new TokenTrimMetrics(new SimpleMeterRegistry());
         this.objectMapper = new ObjectMapper();
+        this.runs = new RunLedger(properties);
         this.pipeline = new ChatPipeline(
                 properties,
                 tokenCounter,
@@ -48,6 +51,7 @@ public final class TestRig {
                 new io.tokentrim.metrics.SavingsEstimator(properties),
                 new io.tokentrim.quality.QualityChecker(embeddings),
                 objectMapper,
-                Clock.systemUTC());
+                Clock.systemUTC(),
+                runs);
     }
 }

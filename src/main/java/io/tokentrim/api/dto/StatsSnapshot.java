@@ -2,6 +2,8 @@ package io.tokentrim.api.dto;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
+import java.util.Map;
+
 public record StatsSnapshot(
         long requests,
         @JsonProperty("cache_hits") long cacheHits,
@@ -13,6 +15,7 @@ public record StatsSnapshot(
         @JsonProperty("tokens_saved") long tokensSaved,
         @JsonProperty("estimated_cost_saved_usd") double estimatedCostSavedUsd,
         @JsonProperty("average_latency_ms") double averageLatencyMs,
-        @JsonProperty("upstream_errors") long upstreamErrors
+        @JsonProperty("upstream_errors") long upstreamErrors,
+        @JsonProperty("tokens_saved_by_technique") Map<String, Long> tokensSavedByTechnique
 ) {
 }
