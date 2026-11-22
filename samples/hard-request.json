@@ -1,0 +1,9 @@
+{
+  "model": "gpt-4o-mini",
+  "messages": [
+    {
+      "role": "user",
+      "content": "Prove step by step the time complexity of merge sort and implement the algorithm in Python."
+    }
+  ]
+}
